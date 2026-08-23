@@ -9,6 +9,8 @@ import com.pid.backend.repository.ApiKeyRepository;
 import com.pid.backend.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class AffiliateCatalogueService {
     private final ApiKeyRepository apiKeyRepository;
     private final ShowRepository showRepository;
 
+    @Transactional
     public List<ShowResponseDto> getShowsForAffiliate(String apiKeyValue) {
         ApiKey apiKey = validateApiKey(apiKeyValue);
 
@@ -51,6 +54,20 @@ public class AffiliateCatalogueService {
         if (!Boolean.TRUE.equals(apiKey.getEnabled())) {
             throw new BadRequestException("API key is disabled");
         }
+
+        int limit = apiKey.getAffiliatePlan() != null && apiKey.getAffiliatePlan().getApiLimit() != null
+                ? apiKey.getAffiliatePlan().getApiLimit() : 0;
+        LocalDateTime now = LocalDateTime.now();
+        if (apiKey.getApiUsagePeriodStart() == null || !apiKey.getApiUsagePeriodStart().toLocalDate().withDayOfMonth(1).equals(now.toLocalDate().withDayOfMonth(1))) {
+            apiKey.setApiUsageCount(0);
+            apiKey.setApiUsagePeriodStart(now);
+        }
+        int usage = apiKey.getApiUsageCount() != null ? apiKey.getApiUsageCount() : 0;
+        if (limit > 0 && usage >= limit) {
+            throw new BadRequestException("Monthly API quota reached for this affiliate plan");
+        }
+        apiKey.setApiUsageCount(usage + 1);
+        apiKeyRepository.save(apiKey);
 
         return apiKey;
     }

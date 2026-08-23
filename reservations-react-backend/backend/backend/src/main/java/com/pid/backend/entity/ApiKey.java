@@ -23,6 +23,12 @@ public class ApiKey {
 
     private Boolean enabled;
 
+    @Column(name = "api_usage_count")
+    private Integer apiUsageCount;
+
+    @Column(name = "api_usage_period_start")
+    private LocalDateTime apiUsagePeriodStart;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
@@ -42,6 +48,14 @@ public class ApiKey {
 
         if (enabled == null) {
             enabled = true;
+        }
+
+        if (apiUsageCount == null) {
+            apiUsageCount = 0;
+        }
+
+        if (apiUsagePeriodStart == null) {
+            apiUsagePeriodStart = LocalDateTime.now();
         }
     }
 }

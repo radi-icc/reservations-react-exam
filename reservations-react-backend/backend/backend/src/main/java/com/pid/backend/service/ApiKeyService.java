@@ -114,7 +114,16 @@ public class ApiKeyService {
                 .affiliatePlanName(affiliatePlan != null ? affiliatePlan.getPlanName() : null)
                 .apiKey(apiKey.getApiKey())
                 .enabled(apiKey.getEnabled())
+                .apiLimit(affiliatePlan != null ? affiliatePlan.getApiLimit() : null)
+                .apiUsageCount(apiKey.getApiUsageCount() != null ? apiKey.getApiUsageCount() : 0)
+                .remainingCalls(remainingCalls(apiKey))
                 .createdAt(apiKey.getCreatedAt())
                 .build();
+    }
+
+    private Integer remainingCalls(ApiKey apiKey) {
+        int limit = apiKey.getAffiliatePlan() != null && apiKey.getAffiliatePlan().getApiLimit() != null ? apiKey.getAffiliatePlan().getApiLimit() : 0;
+        if (limit <= 0) return null;
+        return Math.max(0, limit - (apiKey.getApiUsageCount() != null ? apiKey.getApiUsageCount() : 0));
     }
 }

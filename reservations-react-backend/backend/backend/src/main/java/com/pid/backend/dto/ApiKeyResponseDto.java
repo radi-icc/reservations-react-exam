@@ -22,5 +22,8 @@ public class ApiKeyResponseDto {
 
     private String apiKey;
     private Boolean enabled;
+    private Integer apiLimit;
+    private Integer apiUsageCount;
+    private Integer remainingCalls;
     private LocalDateTime createdAt;
 }

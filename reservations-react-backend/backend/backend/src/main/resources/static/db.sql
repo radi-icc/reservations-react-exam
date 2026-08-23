@@ -150,6 +150,8 @@ CREATE TABLE IF NOT EXISTS api_keys (
     affiliate_plan_id BIGINT NOT NULL,
     api_key VARCHAR(255) UNIQUE,
     enabled BOOLEAN DEFAULT TRUE,
+    api_usage_count INT DEFAULT 0,
+    api_usage_period_start TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_api_key_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_api_key_plan FOREIGN KEY (affiliate_plan_id) REFERENCES affiliate_plans(id)
