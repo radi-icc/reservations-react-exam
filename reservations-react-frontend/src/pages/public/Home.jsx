@@ -1,6 +1,21 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import CatalogueTable from "../../components/shows/CatalogueTable";
+import Loader from "../../components/common/Loader";
+import { getShows } from "../../api/showsApi";
 
-const Home = () => (
+const Home = () => {
+  const [shows, setShows] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getShows({ page: 0, size: 3, sortBy: "title", direction: "asc" })
+      .then((response) => setShows(response.data.content || []))
+      .catch(() => setShows([]))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return <>
   <section className="hero">
     <div className="hero-copy">
       <span className="eyebrow">Production company reservation platform</span>
@@ -22,6 +37,11 @@ const Home = () => (
       <div className="hero-panel-item"><strong>Publish</strong><span>RSS feed and affiliate catalogue API</span></div>
     </div>
   </section>
-);
+  <section className="home-catalogue" aria-labelledby="home-catalogue-title">
+    <div className="section-title-row"><div><span className="eyebrow">Programme</span><h2 id="home-catalogue-title">Shows catalogue</h2></div><Link className="btn btn-outline btn-sm" to="/shows">View all shows</Link></div>
+    {loading ? <Loader /> : <CatalogueTable shows={shows} />}
+  </section>
+  </>;
+};
 
 export default Home;
