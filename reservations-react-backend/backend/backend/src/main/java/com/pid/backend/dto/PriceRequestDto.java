@@ -20,4 +20,7 @@ public class PriceRequestDto {
     @NotNull(message = "Amount is required")
     @DecimalMin(value = "0.0", inclusive = false)
     private BigDecimal amount;
+
+    @NotNull(message = "Representation id is required")
+    private Long representationId;
 }

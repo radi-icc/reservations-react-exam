@@ -32,5 +32,8 @@ public class ReservationResponseDto {
     private Integer quantity;
     private BigDecimal totalPrice;
     private String status;
+    private String ticketDeliveryMethod;
+    private String paymentMethod;
+    private String paymentStatus;
     private LocalDateTime reservationDate;
 }

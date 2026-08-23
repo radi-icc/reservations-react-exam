@@ -69,6 +69,11 @@ public class ReservationService {
             throw new BadRequestException("This show is not bookable");
         }
 
+        if (price.getRepresentation() == null
+                || !price.getRepresentation().getId().equals(representation.getId())) {
+            throw new BadRequestException("The selected price is not available for this representation");
+        }
+
         if (representation.getPerformanceDate() != null &&
                 representation.getPerformanceDate().isBefore(LocalDate.now())) {
             throw new BadRequestException("Cannot reserve a past performance");
@@ -98,6 +103,9 @@ public class ReservationService {
                 .user(user)
                 .totalPrice(totalPrice)
                 .status("CONFIRMED")
+                .ticketDeliveryMethod(requestDto.getTicketDeliveryMethod())
+                .paymentMethod(requestDto.getPaymentMethod())
+                .paymentStatus("CONFIRMED")
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
@@ -153,6 +161,11 @@ public class ReservationService {
         }
 
         reservation.setStatus("CANCELLED");
+        reservation.setPaymentStatus(
+                "CARD".equalsIgnoreCase(reservation.getPaymentMethod())
+                        ? "REFUNDED"
+                        : "CANCELLED"
+        );
         reservationRepository.save(reservation);
     }
 
@@ -170,6 +183,9 @@ public class ReservationService {
                     .email(user != null ? user.getEmail() : null)
                     .totalPrice(reservation.getTotalPrice())
                     .status(reservation.getStatus())
+                    .ticketDeliveryMethod(reservation.getTicketDeliveryMethod())
+                    .paymentMethod(reservation.getPaymentMethod())
+                    .paymentStatus(reservation.getPaymentStatus())
                     .reservationDate(reservation.getReservationDate())
                     .build();
         }
@@ -204,6 +220,9 @@ public class ReservationService {
                 .quantity(line.getQuantity())
                 .totalPrice(reservation.getTotalPrice())
                 .status(reservation.getStatus())
+                .ticketDeliveryMethod(reservation.getTicketDeliveryMethod())
+                .paymentMethod(reservation.getPaymentMethod())
+                .paymentStatus(reservation.getPaymentStatus())
                 .reservationDate(reservation.getReservationDate())
                 .build();
     }

@@ -27,6 +27,15 @@ public class Reservation {
 
     private String status;
 
+    @Column(name = "ticket_delivery_method")
+    private String ticketDeliveryMethod;
+
+    @Column(name = "payment_method")
+    private String paymentMethod;
+
+    @Column(name = "payment_status")
+    private String paymentStatus;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -39,6 +48,10 @@ public class Reservation {
 
         if (status == null) {
             status = "PENDING";
+        }
+
+        if (paymentStatus == null) {
+            paymentStatus = "PENDING";
         }
     }
 }

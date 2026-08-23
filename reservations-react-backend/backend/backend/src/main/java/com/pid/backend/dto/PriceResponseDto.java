@@ -14,4 +14,8 @@ public class PriceResponseDto {
     private Long id;
     private String label;
     private BigDecimal amount;
+    private Long representationId;
+    private String showTitle;
+    private String performanceDate;
+    private String performanceTime;
 }

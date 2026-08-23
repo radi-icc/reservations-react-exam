@@ -93,7 +93,9 @@ CREATE TABLE IF NOT EXISTS representations (
 CREATE TABLE IF NOT EXISTS prices (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     label VARCHAR(50),
-    amount DECIMAL(10,2)
+    amount DECIMAL(10,2),
+    representation_id BIGINT NOT NULL,
+    CONSTRAINT fk_price_representation FOREIGN KEY (representation_id) REFERENCES representations(id)
 );
 
 CREATE TABLE IF NOT EXISTS reservations (
@@ -102,6 +104,9 @@ CREATE TABLE IF NOT EXISTS reservations (
     reservation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     total_price DECIMAL(10,2),
     status VARCHAR(30),
+    ticket_delivery_method VARCHAR(30),
+    payment_method VARCHAR(30),
+    payment_status VARCHAR(30),
     CONSTRAINT fk_reservation_user FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
@@ -167,8 +172,11 @@ INSERT IGNORE INTO representations (id, show_id, location_id, performance_date, 
     (3, 2, 2, '2030-04-15', '19:30:00', 80, 0, FALSE),
     (4, 3, 1, '2030-04-20', '20:30:00', 100, 0, FALSE);
 
-INSERT IGNORE INTO prices (id, label, amount) VALUES
-    (1, 'Plein tarif', 22.50), (2, 'Tarif reduit', 15.00), (3, 'Etudiant', 10.00);
+INSERT IGNORE INTO prices (id, label, amount, representation_id) VALUES
+    (1, 'Plein tarif', 22.50, 1), (2, 'Tarif reduit', 15.00, 1), (3, 'Etudiant', 10.00, 1),
+    (4, 'Plein tarif', 22.50, 2), (5, 'Tarif reduit', 15.00, 2),
+    (6, 'Plein tarif', 18.00, 3), (7, 'Etudiant', 10.00, 3),
+    (8, 'Plein tarif', 25.00, 4);
 
 INSERT IGNORE INTO artists (id, firstname, lastname) VALUES
     (1, 'Camille', 'Martin'), (2, 'Noah', 'Dupont');

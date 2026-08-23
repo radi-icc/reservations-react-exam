@@ -21,4 +21,8 @@ public class Price {
     private String label;
 
     private BigDecimal amount;
+
+    @ManyToOne
+    @JoinColumn(name = "representation_id", nullable = false)
+    private Representation representation;
 }

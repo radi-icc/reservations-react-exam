@@ -15,6 +15,7 @@ const ReservationCard = ({ reservation, onCancel }) => {
         <h3>{reservation.showTitle}</h3>
         <p>{formatDate(reservation.performanceDate)} · {formatTime(reservation.performanceTime)}</p>
         <p className="muted-text">{reservation.priceLabel} · {reservation.quantity} seat(s)</p>
+        <p className="muted-text">Tickets: {reservation.ticketDeliveryMethod === "EMAIL" ? "Email" : "Collect at venue"} · Payment: {reservation.paymentMethod === "CARD" ? "Card" : "On site"}</p>
       </div>
       <div className="reservation-card-side">
         <strong>{formatPrice(reservation.totalPrice)}</strong>

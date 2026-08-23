@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
-import { getResource, normaliseCollection } from "../../api/adminApi";
+import { normaliseCollection } from "../../api/adminApi";
 import { createReservation } from "../../api/reservationsApi";
 import { createReview, getReviewsByShow } from "../../api/reviewsApi";
-import { getAvailability, getRepresentationsByShow, getShowById } from "../../api/showsApi";
+import { getAvailability, getPricesByRepresentation, getRepresentationsByShow, getShowById } from "../../api/showsApi";
 import useAuth from "../../hooks/useAuth";
 import { getErrorMessage } from "../../utils/errorUtils";
 import { formatPrice } from "../../utils/formatPrice";
+import { formatDate, formatTime } from "../../utils/formatDate";
 
 import Button from "../../components/common/Button";
 import EmptyState from "../../components/common/EmptyState";
@@ -26,8 +27,10 @@ const ShowDetails = () => {
   const [representations, setRepresentations] = useState([]);
   const [availabilityById, setAvailabilityById] = useState({});
   const [prices, setPrices] = useState([]);
+  const [pricesLoading, setPricesLoading] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [selectedRepresentation, setSelectedRepresentation] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
   const [loading, setLoading] = useState(true);
   const [reserving, setReserving] = useState(false);
   const [reviewing, setReviewing] = useState(false);
@@ -36,17 +39,15 @@ const ShowDetails = () => {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [showRes, repsRes, pricesRes, reviewsRes] = await Promise.all([
+      const [showRes, repsRes, reviewsRes] = await Promise.all([
         getShowById(id),
         getRepresentationsByShow(id),
-        getResource("prices"),
         getReviewsByShow(id),
       ]);
 
       const reps = repsRes.data || [];
       setShow(showRes.data);
       setRepresentations(reps);
-      setPrices(normaliseCollection(pricesRes.data));
       setReviews(reviewsRes.data || []);
 
       const availabilityResults = await Promise.allSettled(reps.map((rep) => getAvailability(rep.id)));
@@ -59,6 +60,22 @@ const ShowDetails = () => {
       toast.error(getErrorMessage(error, "Failed to load show details"));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRepresentationSelect = async (representation) => {
+    setSelectedRepresentation(representation);
+    setConfirmation(null);
+    setPrices([]);
+
+    try {
+      setPricesLoading(true);
+      const response = await getPricesByRepresentation(representation.id);
+      setPrices(normaliseCollection(response.data));
+    } catch (error) {
+      toast.error(getErrorMessage(error, "Failed to load prices for this performance"));
+    } finally {
+      setPricesLoading(false);
     }
   };
 
@@ -77,9 +94,10 @@ const ShowDetails = () => {
 
     try {
       setReserving(true);
-      await createReservation(payload);
+      const response = await createReservation(payload);
       toast.success("Reservation created successfully");
       setSelectedRepresentation(null);
+      setConfirmation(response.data);
       await loadData();
     } catch (error) {
       toast.error(getErrorMessage(error, "Reservation failed"));
@@ -145,8 +163,7 @@ const ShowDetails = () => {
           </div>
           {!user && <Link className="btn btn-outline btn-sm" to="/login">Login to reserve</Link>}
         </div>
-        {prices.length === 0 && <p className="error-banner">No price types are available. Create prices from the admin back-office first.</p>}
-        <RepresentationList representations={representations} availabilityById={availabilityById} onReserve={setSelectedRepresentation} />
+        <RepresentationList representations={representations} availabilityById={availabilityById} onReserve={handleRepresentationSelect} />
       </section>
 
       <section className="section-block split-section">
@@ -177,15 +194,27 @@ const ShowDetails = () => {
         </div>
       </section>
 
-      <Modal isOpen={!!selectedRepresentation} title="Reserve seats" onClose={() => setSelectedRepresentation(null)}>
+      <Modal isOpen={!!selectedRepresentation || !!confirmation} title={confirmation ? "Reservation confirmed" : "Reserve seats"} onClose={() => { setSelectedRepresentation(null); setConfirmation(null); }}>
         {selectedRepresentation && (
           <ReservationForm
             representation={selectedRepresentation}
             prices={prices}
             availability={availabilityById[selectedRepresentation.id]}
             loading={reserving}
+            pricesLoading={pricesLoading}
             onSubmit={handleReservationSubmit}
           />
+        )}
+        {confirmation && (
+          <div className="reservation-confirmation">
+            <span className="status-pill success">Confirmed</span>
+            <h3>{confirmation.showTitle}</h3>
+            <p>{formatDate(confirmation.performanceDate)} · {formatTime(confirmation.performanceTime)}</p>
+            <p>{confirmation.quantity} seat(s) · {confirmation.priceLabel}</p>
+            <p className="muted-text">Tickets: {confirmation.ticketDeliveryMethod === "EMAIL" ? "sent by email" : "collect at the venue"} · Payment: {confirmation.paymentMethod === "CARD" ? "card" : "at the venue"}</p>
+            <div className="total-row"><span>Total</span><strong>{formatPrice(confirmation.totalPrice)}</strong></div>
+            <Button className="btn-full" onClick={() => setConfirmation(null)}>Done</Button>
+          </div>
         )}
       </Modal>
     </section>

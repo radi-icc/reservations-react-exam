@@ -9,6 +9,8 @@ export const createReservation = (data) => {
     representationId: Number(data.representationId),
     priceId: Number(data.priceId),
     quantity: Number(data.quantity),
+    ticketDeliveryMethod: data.ticketDeliveryMethod,
+    paymentMethod: data.paymentMethod,
   };
 
   return axiosClient.post("/reservations", payload);
