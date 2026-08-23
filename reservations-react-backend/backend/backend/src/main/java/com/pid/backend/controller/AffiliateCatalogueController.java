@@ -16,7 +16,7 @@ public class AffiliateCatalogueController {
 
     @GetMapping("/shows")
     public List<ShowResponseDto> getAffiliateShows(
-            @RequestHeader("X-API-KEY") String apiKey
+            @RequestHeader(value = "X-API-KEY", required = false) String apiKey
     ) {
         return affiliateCatalogueService.getShowsForAffiliate(apiKey);
     }

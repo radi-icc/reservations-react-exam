@@ -15,6 +15,9 @@ public class ShowResponseDto {
     private Long id;
     private Long locationId;
     private String locationDesignation;
+
+    private Long producerId;
+    private String producerName;
     private String slug;
     private String title;
     private String posterUrl;

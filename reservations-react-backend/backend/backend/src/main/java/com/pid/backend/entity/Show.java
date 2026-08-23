@@ -40,6 +40,10 @@ public class Show {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @ManyToOne
+    @JoinColumn(name = "producer_id")
+    private User producer;
+
     @PrePersist
     public void onCreate() {
         if (createdAt == null) {

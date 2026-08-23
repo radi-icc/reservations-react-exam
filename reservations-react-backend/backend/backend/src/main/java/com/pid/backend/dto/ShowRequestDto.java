@@ -18,6 +18,8 @@ public class ShowRequestDto {
     @NotNull(message = "Location id is required")
     private Long locationId;
 
+    private Long producerId;
+
     @NotBlank(message = "Title is required")
     @Size(max = 255, message = "Title must not exceed 255 characters")
     private String title;

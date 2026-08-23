@@ -66,7 +66,9 @@ CREATE TABLE IF NOT EXISTS shows (
     price DECIMAL(10,2),
     description TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_show_location FOREIGN KEY (location_id) REFERENCES locations(id)
+    producer_id BIGINT,
+    CONSTRAINT fk_show_location FOREIGN KEY (location_id) REFERENCES locations(id),
+    CONSTRAINT fk_show_producer FOREIGN KEY (producer_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS collaborations (
@@ -127,6 +129,8 @@ CREATE TABLE IF NOT EXISTS reviews (
     show_id BIGINT NOT NULL,
     rating INT,
     comment TEXT,
+    review_type VARCHAR(30) DEFAULT 'COMMENT',
+    source_url VARCHAR(500),
     is_published BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_review_user FOREIGN KEY (user_id) REFERENCES users(id),

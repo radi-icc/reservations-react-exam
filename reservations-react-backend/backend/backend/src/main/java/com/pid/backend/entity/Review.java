@@ -23,6 +23,12 @@ public class Review {
     @Column(columnDefinition = "TEXT")
     private String comment;
 
+    @Column(name = "review_type")
+    private String reviewType;
+
+    @Column(name = "source_url")
+    private String sourceUrl;
+
     @Column(name = "is_published")
     private Boolean published;
 

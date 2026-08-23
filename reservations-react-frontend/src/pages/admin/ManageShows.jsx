@@ -9,11 +9,13 @@ const ManageShows = () => (
       { key: "id", label: "ID" },
       { key: "title", label: "Title" },
       { key: "locationDesignation", label: "Location" },
+      { key: "producerName", label: "Producer", render: (r) => r.producerName || "Unassigned" },
       { key: "price", label: "Price", render: (r) => formatPrice(r.price) },
       { key: "bookable", label: "Bookable", render: (r) => (r.bookable ? "Yes" : "No") },
     ]}
     fields={[
       { name: "locationId", label: "Location", type: "select", optionsResource: "locations", optionLabel: "designation", valueType: "number", required: true },
+      { name: "producerId", label: "Producer", type: "select", optionsResource: "users", optionLabel: "username", valueType: "number" },
       { name: "title", label: "Title", required: true },
       { name: "posterUrl", label: "Poster URL" },
       { name: "bookable", label: "Bookable", type: "checkbox", defaultValue: true },

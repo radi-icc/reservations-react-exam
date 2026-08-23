@@ -21,6 +21,8 @@ public class ReviewResponseDto {
 
     private Integer rating;
     private String comment;
+    private String reviewType;
+    private String sourceUrl;
     private Boolean published;
     private LocalDateTime createdAt;
 }

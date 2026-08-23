@@ -3,7 +3,7 @@ import useAuth from "../../hooks/useAuth";
 import { APP_NAME } from "../../utils/constants";
 
 const Navbar = () => {
-  const { user, logout, isAdmin } = useAuth();
+  const { user, logout, isAdmin, isProducer, isCritic, isAffiliate } = useAuth();
 
   return (
     <header className="navbar">
@@ -18,6 +18,9 @@ const Navbar = () => {
         <NavLink to="/affiliate-catalogue">Affiliate API</NavLink>
         {user && <NavLink to="/my-reservations">My Reservations</NavLink>}
         {user && <NavLink to="/my-reviews">My Reviews</NavLink>}
+        {isProducer && <NavLink to="/producer">Producer</NavLink>}
+        {isCritic && <NavLink to="/critic">Critic</NavLink>}
+        {isAffiliate && <NavLink to="/affiliate">Affiliate</NavLink>}
         {isAdmin && <NavLink to="/admin">Back Office</NavLink>}
       </nav>
 

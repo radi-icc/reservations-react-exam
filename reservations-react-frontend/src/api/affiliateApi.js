@@ -6,3 +6,7 @@ export const getAffiliateShows = (apiKey) =>
       "X-API-KEY": apiKey,
     },
   });
+
+export const getAffiliatePlans = () => axiosClient.get("/affiliate/plans");
+export const getMyAffiliateKeys = () => axiosClient.get("/affiliate/me/keys");
+export const createMyAffiliateKey = (affiliatePlanId) => axiosClient.post("/affiliate/me/keys", null, { params: { affiliatePlanId } });

@@ -43,7 +43,7 @@ public class SecurityConfig {
                          */
                         .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/affiliate/**").permitAll()
+                        .requestMatchers("/api/affiliate/shows", "/api/affiliate/plans").permitAll()
                         .requestMatchers("/api/rss/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/shows/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/shows/**").permitAll()
@@ -52,6 +52,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/representations/**").permitAll()
 
                         .requestMatchers("/api/auth/me").authenticated()
+                        .requestMatchers("/api/affiliate/me/**").hasRole("AFFILIATE")
+                        .requestMatchers("/api/producer/**").hasRole("PRODUCER")
+                        .requestMatchers("/api/critic/**").hasRole("CRITIC")
                         .requestMatchers("/api/users/me").authenticated()
                         .requestMatchers(HttpMethod.GET, "/api/reservations").hasRole("ADMIN")
                         .requestMatchers("/api/reservations/me", "/api/reservations/*", "/api/reservations/*/cancel").authenticated()

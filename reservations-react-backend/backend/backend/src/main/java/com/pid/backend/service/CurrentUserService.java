@@ -30,4 +30,8 @@ public class CurrentUserService {
                 && user.getRole() != null
                 && "ADMIN".equalsIgnoreCase(user.getRole().getRoleName());
     }
+
+    public boolean hasRole(User user, String roleName) {
+        return user != null && user.getRole() != null && roleName.equalsIgnoreCase(user.getRole().getRoleName());
+    }
 }

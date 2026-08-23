@@ -8,6 +8,7 @@ import com.pid.backend.entity.User;
 import com.pid.backend.repository.AffiliatePlanRepository;
 import com.pid.backend.repository.ApiKeyRepository;
 import com.pid.backend.repository.UserRepository;
+import com.pid.backend.exception.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +23,7 @@ public class ApiKeyService {
     private final ApiKeyRepository apiKeyRepository;
     private final UserRepository userRepository;
     private final AffiliatePlanRepository affiliatePlanRepository;
+    private final CurrentUserService currentUserService;
 
     public List<ApiKeyResponseDto> getAllApiKeys() {
         return apiKeyRepository.findAll()
@@ -77,6 +79,20 @@ public class ApiKeyService {
                 .orElseThrow(() -> new RuntimeException("API key not found with id: " + id));
 
         apiKeyRepository.delete(apiKey);
+    }
+
+    public List<ApiKeyResponseDto> getMyApiKeys() { return apiKeyRepository.findByUserId(requireAffiliate().getId()).stream().map(this::mapToResponse).toList(); }
+
+    public ApiKeyResponseDto createMyApiKey(Long affiliatePlanId) {
+        User user = requireAffiliate();
+        AffiliatePlan plan = affiliatePlanRepository.findById(affiliatePlanId).orElseThrow(() -> new RuntimeException("Affiliate plan not found with id: " + affiliatePlanId));
+        return mapToResponse(apiKeyRepository.save(ApiKey.builder().user(user).affiliatePlan(plan).apiKey(generateSecureApiKey()).enabled(true).build()));
+    }
+
+    private User requireAffiliate() {
+        User user = currentUserService.getCurrentUser();
+        if (!currentUserService.hasRole(user, "AFFILIATE")) throw new BadRequestException("Affiliate role is required");
+        return user;
     }
 
     private String generateSecureApiKey() {

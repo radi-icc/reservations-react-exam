@@ -18,6 +18,8 @@ const AuthProvider = ({ children }) => {
   const roleName = (user?.roleName || "").toLowerCase();
   const isAdmin = ["admin", "role_admin", "administrator", "super_admin", "super-admin"].includes(roleName);
   const isProducer = ["producer", "role_producer"].includes(roleName);
+  const isCritic = ["critic", "role_critic"].includes(roleName);
+  const isAffiliate = ["affiliate", "role_affiliate"].includes(roleName);
 
   const loadProfile = async () => {
     const token = localStorage.getItem("token");
@@ -87,13 +89,15 @@ const AuthProvider = ({ children }) => {
       setUser,
       isAdmin,
       isProducer,
+      isCritic,
+      isAffiliate,
       authLoading,
       login,
       register,
       logout,
       loadProfile,
     }),
-    [user, isAdmin, isProducer, authLoading]
+    [user, isAdmin, isProducer, isCritic, isAffiliate, authLoading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

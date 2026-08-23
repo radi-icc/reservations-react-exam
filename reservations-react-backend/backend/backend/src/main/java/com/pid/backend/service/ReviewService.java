@@ -69,16 +69,31 @@ public class ReviewService {
                 .show(show)
                 .rating(requestDto.getRating())
                 .comment(requestDto.getComment())
+                .reviewType("COMMENT")
                 .published(false)
                 .build();
 
         return mapToResponse(reviewRepository.save(review));
     }
 
+    public ReviewResponseDto createCritique(ReviewRequestDto requestDto, String sourceUrl) {
+        User user = currentUserService.getCurrentUser();
+        if (!currentUserService.hasRole(user, "CRITIC")) throw new BadRequestException("Critic role is required");
+        Show show = showRepository.findById(requestDto.getShowId()).orElseThrow(() -> new ResourceNotFoundException("Show not found with id: " + requestDto.getShowId()));
+        Review critique = Review.builder().user(user).show(show).rating(requestDto.getRating()).comment(requestDto.getComment()).sourceUrl(sourceUrl).reviewType("CRITIQUE").published(false).build();
+        return mapToResponse(reviewRepository.save(critique));
+    }
+
+    public List<ReviewResponseDto> getReviewsForProducer() {
+        User producer = currentUserService.getCurrentUser();
+        if (!currentUserService.hasRole(producer, "PRODUCER")) throw new BadRequestException("Producer role is required");
+        return reviewRepository.findByShowProducerId(producer.getId()).stream().map(this::mapToResponse).toList();
+    }
+
     public ReviewResponseDto publishReview(Long id) {
-        requireAdmin();
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
+        requireModerator(review);
 
         review.setPublished(true);
 
@@ -86,9 +101,9 @@ public class ReviewService {
     }
 
     public ReviewResponseDto unpublishReview(Long id) {
-        requireAdmin();
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
+        requireModerator(review);
 
         review.setPublished(false);
 
@@ -114,6 +129,12 @@ public class ReviewService {
         }
     }
 
+    private void requireModerator(Review review) {
+        User currentUser = currentUserService.getCurrentUser();
+        boolean ownsShow = currentUserService.hasRole(currentUser, "PRODUCER") && review.getShow() != null && review.getShow().getProducer() != null && review.getShow().getProducer().getId().equals(currentUser.getId());
+        if (!currentUserService.isAdmin(currentUser) && !ownsShow) throw new BadRequestException("You cannot moderate this review");
+    }
+
     private ReviewResponseDto mapToResponse(Review review) {
         User user = review.getUser();
         Show show = review.getShow();
@@ -126,6 +147,8 @@ public class ReviewService {
                 .showTitle(show != null ? show.getTitle() : null)
                 .rating(review.getRating())
                 .comment(review.getComment())
+                .reviewType(review.getReviewType())
+                .sourceUrl(review.getSourceUrl())
                 .published(review.getPublished())
                 .createdAt(review.getCreatedAt())
                 .build();

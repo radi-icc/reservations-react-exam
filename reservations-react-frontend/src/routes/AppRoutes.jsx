@@ -18,6 +18,9 @@ import Register from "../pages/auth/Register";
 import Profile from "../pages/member/Profile";
 import MyReservations from "../pages/member/MyReservations";
 import MyReviews from "../pages/member/MyReviews";
+import ProducerDashboard from "../pages/member/ProducerDashboard";
+import CriticWorkspace from "../pages/member/CriticWorkspace";
+import AffiliateWorkspace from "../pages/member/AffiliateWorkspace";
 
 import Dashboard from "../pages/admin/Dashboard";
 import ManageShows from "../pages/admin/ManageShows";
@@ -47,6 +50,9 @@ const AppRoutes = () => (
       <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
       <Route path="/my-reservations" element={<PrivateRoute><MyReservations /></PrivateRoute>} />
       <Route path="/my-reviews" element={<PrivateRoute><MyReviews /></PrivateRoute>} />
+      <Route path="/producer" element={<PrivateRoute><ProducerDashboard /></PrivateRoute>} />
+      <Route path="/critic" element={<PrivateRoute><CriticWorkspace /></PrivateRoute>} />
+      <Route path="/affiliate" element={<PrivateRoute><AffiliateWorkspace /></PrivateRoute>} />
     </Route>
 
     <Route element={<AuthLayout />}>
