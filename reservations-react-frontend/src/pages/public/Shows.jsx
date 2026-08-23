@@ -101,8 +101,8 @@ const Shows = () => {
         onReset={() => { setPage(0); setFilters(defaultFilters); }}
       /></div>
 
-      <section id="catalogue" className="catalogue-list" aria-labelledby="catalogue-title">
-        <div className="section-title-row"><h2 id="catalogue-title">Show list</h2><span className="muted-text">{totalElements} productions</span></div>
+      <section id="catalogue" className="catalogue-list" aria-labelledby="catalogue-title" aria-busy={loading}>
+        <div className="section-title-row"><h2 id="catalogue-title">Show list</h2><span className="muted-text" aria-live="polite">{loading ? "Loading catalogue…" : `${totalElements} productions`}</span></div>
         {loading ? <Loader /> : <CatalogueTable shows={shows} />}
       </section>
 

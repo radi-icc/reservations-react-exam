@@ -1,12 +1,12 @@
 import Button from "../common/Button";
 
 const ShowFilters = ({ filters, locations = [], onChange, onReset }) => (
-  <form className="filters-card" onSubmit={(e) => e.preventDefault()}>
+  <form className="filters-card" onSubmit={(e) => e.preventDefault()} aria-label="Catalogue filters">
     <div className="form-group no-margin">
       <label className="form-label">Search</label>
       <input
         className="form-input"
-        placeholder="Search by show title, venue, or keyword"
+        placeholder="Search by show title"
         value={filters.search}
         onChange={(e) => onChange("search", e.target.value)}
       />
