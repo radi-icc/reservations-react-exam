@@ -42,6 +42,15 @@ npm run build
 
 `npm ci` est utilise par le script frontend afin d'installer exactement les versions figees dans `package-lock.json`.
 
+Pour verifier le schema MySQL reel (apres son initialisation), activez le smoke-test dedie :
+
+```powershell
+$env:RUN_MYSQL_TESTS = "true"
+$env:MYSQL_TEST_URL = "jdbc:mysql://localhost:3306/reservations_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Europe/Paris"
+Set-Location reservations-react-backend/backend/backend
+.\mvnw.cmd test
+```
+
 ## Reinitialiser les donnees locales
 
 Cette commande supprime uniquement le volume Docker local du projet puis recree la base avec les donnees de demonstration :
