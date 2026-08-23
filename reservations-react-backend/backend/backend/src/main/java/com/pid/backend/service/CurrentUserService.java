@@ -24,4 +24,10 @@ public class CurrentUserService {
         return userRepository.findByUsername(authentication.getName())
                 .orElseThrow(() -> new ResourceNotFoundException("Current user not found"));
     }
+
+    public boolean isAdmin(User user) {
+        return user != null
+                && user.getRole() != null
+                && "ADMIN".equalsIgnoreCase(user.getRole().getRoleName());
+    }
 }

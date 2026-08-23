@@ -44,6 +44,12 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reservation not found with id: " + id));
 
+        User currentUser = currentUserService.getCurrentUser();
+        if (!currentUserService.isAdmin(currentUser)
+                && !reservation.getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("You cannot view another user's reservation");
+        }
+
         return mapReservationToResponse(reservation);
     }
 

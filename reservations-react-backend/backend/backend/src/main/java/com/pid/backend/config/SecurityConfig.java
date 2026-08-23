@@ -43,44 +43,36 @@ public class SecurityConfig {
                          */
                         .requestMatchers("/api/auth/signup", "/api/auth/login").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/admin/external-shows/**").permitAll()
-                        .requestMatchers("/api/admin/csv/**").permitAll()
                         .requestMatchers("/api/affiliate/**").permitAll()
                         .requestMatchers("/api/rss/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/shows/*").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/shows/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/locations/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/localities/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/representations/**").permitAll()
 
-                        /*
-                         * PUBLIC CRUD / TESTING ENDPOINTS
-                         * No JWT required for now.
-                         */
-                        .requestMatchers("/api/users/**").permitAll()
-                        .requestMatchers("/api/roles/**").permitAll()
-                        .requestMatchers("/api/localities/**").permitAll()
-                        .requestMatchers("/api/locations/**").permitAll()
-                        .requestMatchers("/api/artists/**").permitAll()
-                        .requestMatchers("/api/artist-types/**").permitAll()
-                        .requestMatchers("/api/artist-type-assignments/**").permitAll()
-                        .requestMatchers("/api/collaborations/**").permitAll()
-                        .requestMatchers("/api/prices/**").permitAll()
-                        .requestMatchers("/api/shows/**").permitAll()
-                        .requestMatchers("/api/representations/**").permitAll()
-                        .requestMatchers("/api/affiliate-plans/**").permitAll()
-                        .requestMatchers("/api/api-keys/**").permitAll()
-                        .requestMatchers("/api/statistics/**").permitAll()
-
-                        /*
-                         * JWT REQUIRED ENDPOINTS
-                         * These endpoints use CurrentUserService, so JWT must be present.
-                         */
                         .requestMatchers("/api/auth/me").authenticated()
-                        .requestMatchers("/api/reservations/**").authenticated()
-                        .requestMatchers("/api/reviews/**").authenticated()
-
-                        /*
-                         * DEFAULT
-                         * Public for now during development.
-                         */
-                        .anyRequest().permitAll()
+                        .requestMatchers("/api/users/me").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reservations").hasRole("ADMIN")
+                        .requestMatchers("/api/reservations/me", "/api/reservations/*", "/api/reservations/*/cancel").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/reservations").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews").hasRole("ADMIN")
+                        .requestMatchers("/api/reviews/me", "/api/reviews/**").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/reviews").authenticated()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/api/roles/**").hasRole("ADMIN")
+                        .requestMatchers("/api/artists/**").hasRole("ADMIN")
+                        .requestMatchers("/api/artist-types/**").hasRole("ADMIN")
+                        .requestMatchers("/api/artist-type-assignments/**").hasRole("ADMIN")
+                        .requestMatchers("/api/collaborations/**").hasRole("ADMIN")
+                        .requestMatchers("/api/prices/**").hasRole("ADMIN")
+                        .requestMatchers("/api/affiliate-plans/**").hasRole("ADMIN")
+                        .requestMatchers("/api/api-keys/**").hasRole("ADMIN")
+                        .requestMatchers("/api/statistics/shows/*/sales").hasAnyRole("ADMIN", "PRODUCER")
+                        .requestMatchers("/api/statistics/**").hasRole("ADMIN")
+                        .requestMatchers("/api/shows/**", "/api/locations/**", "/api/localities/**", "/api/representations/**").hasRole("ADMIN")
+                        .anyRequest().denyAll()
                 )
                 .authenticationProvider(authenticationProvider())
 

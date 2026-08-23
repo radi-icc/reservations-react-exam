@@ -3,12 +3,12 @@ import toast from "react-hot-toast";
 import Button from "../../components/common/Button";
 import Input from "../../components/common/Input";
 import useAuth from "../../hooks/useAuth";
-import { updateUser } from "../../api/usersApi";
+import { updateCurrentUserProfile } from "../../api/usersApi";
 import { getErrorMessage } from "../../utils/errorUtils";
 
 const Profile = () => {
   const { user, setUser, loadProfile } = useAuth();
-  const [form, setForm] = useState({ username: "", email: "", firstname: "", lastname: "", language: "en", enabled: true, roleId: "" });
+  const [form, setForm] = useState({ username: "", email: "", firstname: "", lastname: "", language: "en" });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -19,8 +19,6 @@ const Profile = () => {
         firstname: user.firstname || "",
         lastname: user.lastname || "",
         language: user.language || "en",
-        enabled: user.enabled ?? true,
-        roleId: user.roleId || 1,
       });
     }
   }, [user]);
@@ -32,7 +30,7 @@ const Profile = () => {
 
     try {
       setSaving(true);
-      const response = await updateUser(user.userId, { ...form, roleId: Number(form.roleId), enabled: Boolean(form.enabled) });
+      const response = await updateCurrentUserProfile(form);
       setUser((prev) => ({ ...prev, ...response.data, userId: response.data.id ?? prev.userId }));
       await loadProfile();
       toast.success("Profile updated");

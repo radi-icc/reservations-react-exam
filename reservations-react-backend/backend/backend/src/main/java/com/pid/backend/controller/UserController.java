@@ -3,6 +3,7 @@ package com.pid.backend.controller;
 import com.pid.backend.dto.UserRequestDto;
 import com.pid.backend.dto.UserResponseDto;
 import com.pid.backend.dto.UserUpdateRequestDto;
+import com.pid.backend.dto.ProfileUpdateRequestDto;
 import com.pid.backend.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,18 @@ public class UserController {
     @GetMapping
     public List<UserResponseDto> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/me")
+    public UserResponseDto getCurrentUserProfile() {
+        return userService.getCurrentUserProfile();
+    }
+
+    @PutMapping("/me")
+    public UserResponseDto updateCurrentUser(
+            @Valid @RequestBody ProfileUpdateRequestDto requestDto
+    ) {
+        return userService.updateCurrentUser(requestDto);
     }
 
     @GetMapping("/{id}")

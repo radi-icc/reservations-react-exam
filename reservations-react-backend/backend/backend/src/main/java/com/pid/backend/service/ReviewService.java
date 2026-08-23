@@ -9,6 +9,7 @@ import com.pid.backend.exception.ResourceNotFoundException;
 import com.pid.backend.repository.ReviewRepository;
 import com.pid.backend.repository.ShowRepository;
 import lombok.RequiredArgsConstructor;
+import com.pid.backend.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,6 +49,12 @@ public class ReviewService {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
 
+        User currentUser = currentUserService.getCurrentUser();
+        if (!currentUserService.isAdmin(currentUser)
+                && !review.getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("You cannot view another user's review");
+        }
+
         return mapToResponse(review);
     }
 
@@ -69,6 +76,7 @@ public class ReviewService {
     }
 
     public ReviewResponseDto publishReview(Long id) {
+        requireAdmin();
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
 
@@ -78,6 +86,7 @@ public class ReviewService {
     }
 
     public ReviewResponseDto unpublishReview(Long id) {
+        requireAdmin();
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
 
@@ -90,7 +99,19 @@ public class ReviewService {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
 
+        User currentUser = currentUserService.getCurrentUser();
+        if (!currentUserService.isAdmin(currentUser)
+                && !review.getUser().getId().equals(currentUser.getId())) {
+            throw new BadRequestException("You cannot delete another user's review");
+        }
+
         reviewRepository.delete(review);
+    }
+
+    private void requireAdmin() {
+        if (!currentUserService.isAdmin(currentUserService.getCurrentUser())) {
+            throw new BadRequestException("Administrator role is required");
+        }
     }
 
     private ReviewResponseDto mapToResponse(Review review) {

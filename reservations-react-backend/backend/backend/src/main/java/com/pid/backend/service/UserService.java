@@ -3,6 +3,7 @@ package com.pid.backend.service;
 import com.pid.backend.dto.UserRequestDto;
 import com.pid.backend.dto.UserResponseDto;
 import com.pid.backend.dto.UserUpdateRequestDto;
+import com.pid.backend.dto.ProfileUpdateRequestDto;
 import com.pid.backend.entity.Role;
 import com.pid.backend.entity.User;
 import com.pid.backend.exception.BadRequestException;
@@ -28,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CurrentUserService currentUserService;
 
     public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll()
@@ -41,6 +43,34 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
 
         return mapToResponse(user);
+    }
+
+    public UserResponseDto getCurrentUserProfile() {
+        return mapToResponse(currentUserService.getCurrentUser());
+    }
+
+    public UserResponseDto updateCurrentUser(ProfileUpdateRequestDto requestDto) {
+        User user = currentUserService.getCurrentUser();
+
+        if (requestDto.getUsername() != null && !requestDto.getUsername().equals(user.getUsername())) {
+            if (userRepository.existsByUsername(requestDto.getUsername())) {
+                throw new BadRequestException("Username already exists: " + requestDto.getUsername());
+            }
+            user.setUsername(requestDto.getUsername());
+        }
+
+        if (requestDto.getEmail() != null && !requestDto.getEmail().equals(user.getEmail())) {
+            if (userRepository.existsByEmail(requestDto.getEmail())) {
+                throw new BadRequestException("Email already exists: " + requestDto.getEmail());
+            }
+            user.setEmail(requestDto.getEmail());
+        }
+
+        user.setFirstname(requestDto.getFirstname());
+        user.setLastname(requestDto.getLastname());
+        user.setLanguage(requestDto.getLanguage());
+
+        return mapToResponse(userRepository.save(user));
     }
 
     public UserResponseDto createUser(UserRequestDto requestDto) {
