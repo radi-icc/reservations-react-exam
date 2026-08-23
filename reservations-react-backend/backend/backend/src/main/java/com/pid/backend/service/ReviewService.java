@@ -28,6 +28,22 @@ public class ReviewService {
                 .toList();
     }
 
+    public List<ReviewResponseDto> getPublishedReviewsByShow(Long showId) {
+        return reviewRepository.findByShowIdAndPublishedTrue(showId)
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<ReviewResponseDto> getMyReviews() {
+        User user = currentUserService.getCurrentUser();
+
+        return reviewRepository.findByUserId(user.getId())
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
     public ReviewResponseDto getReviewById(Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));

@@ -7,7 +7,7 @@ import { getErrorMessage } from "../../utils/errorUtils";
 
 const AdminTools = () => {
   const [defaultLocationId, setDefaultLocationId] = useState("");
-  const [csvContent, setCsvContent] = useState("");
+  const [csvFile, setCsvFile] = useState(null);
   const [loading, setLoading] = useState("");
 
   const handleExternalImport = async () => {
@@ -50,16 +50,16 @@ const AdminTools = () => {
   };
 
   const handleCsvImport = async () => {
-    if (!csvContent.trim()) {
-      toast.error("Paste CSV content first");
+    if (!csvFile) {
+      toast.error("Select a CSV file first");
       return;
     }
 
     try {
       setLoading("import");
-      await importShowsCsv(csvContent.trim());
+      await importShowsCsv(csvFile);
       toast.success("CSV imported");
-      setCsvContent("");
+      setCsvFile(null);
     } catch (error) {
       toast.error(getErrorMessage(error, "CSV import failed"));
     } finally {
@@ -93,8 +93,9 @@ const AdminTools = () => {
 
         <article className="card admin-tool-card wide-card">
           <h2>CSV Import</h2>
-          <p className="muted-text">Paste CSV content to import shows into the catalogue.</p>
-          <textarea className="form-input textarea large" placeholder="Paste CSV content here..." value={csvContent} onChange={(e) => setCsvContent(e.target.value)} />
+          <p className="muted-text">Select a CSV file using the required catalogue format.</p>
+          <input className="form-input" type="file" accept=".csv,text/csv" onChange={(e) => setCsvFile(e.target.files?.[0] || null)} />
+          {csvFile && <p className="muted-text">Selected file: {csvFile.name}</p>}
           <Button onClick={handleCsvImport} disabled={loading === "import"}>{loading === "import" ? "Importing..." : "Import CSV"}</Button>
         </article>
 

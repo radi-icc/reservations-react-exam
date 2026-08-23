@@ -17,8 +17,10 @@ public class RepresentationController {
     private final RepresentationService representationService;
 
     @GetMapping
-    public List<RepresentationResponseDto> getAllRepresentations() {
-        return representationService.getAllRepresentations();
+    public List<RepresentationResponseDto> getAllRepresentations(
+            @RequestParam(required = false) Long showId
+    ) {
+        return representationService.getAllRepresentations(showId);
     }
 
     @GetMapping("/{id}")

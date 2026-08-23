@@ -4,6 +4,7 @@ import com.pid.backend.security.CustomUserDetailsService;
 import com.pid.backend.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.*;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.*;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -46,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/csv/**").permitAll()
                         .requestMatchers("/api/affiliate/**").permitAll()
                         .requestMatchers("/api/rss/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/reviews/shows/*").permitAll()
 
                         /*
                          * PUBLIC CRUD / TESTING ENDPOINTS

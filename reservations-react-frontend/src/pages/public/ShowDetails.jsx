@@ -40,7 +40,7 @@ const ShowDetails = () => {
         getShowById(id),
         getRepresentationsByShow(id),
         getResource("prices"),
-        getReviewsByShow(id, true),
+        getReviewsByShow(id),
       ]);
 
       const reps = repsRes.data || [];

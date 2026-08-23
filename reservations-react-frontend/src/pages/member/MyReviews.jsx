@@ -3,20 +3,18 @@ import toast from "react-hot-toast";
 import Button from "../../components/common/Button";
 import EmptyState from "../../components/common/EmptyState";
 import Loader from "../../components/common/Loader";
-import { deleteReview, getReviews } from "../../api/reviewsApi";
-import useAuth from "../../hooks/useAuth";
+import { deleteReview, getMyReviews } from "../../api/reviewsApi";
 import { getErrorMessage } from "../../utils/errorUtils";
 
 const MyReviews = () => {
-  const { user } = useAuth();
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const loadReviews = async () => {
     try {
       setLoading(true);
-      const response = await getReviews();
-      setReviews((response.data || []).filter((review) => Number(review.userId) === Number(user?.userId)));
+      const response = await getMyReviews();
+      setReviews(response.data || []);
     } catch (error) {
       toast.error(getErrorMessage(error, "Failed to load reviews"));
     } finally {
@@ -36,7 +34,7 @@ const MyReviews = () => {
     }
   };
 
-  useEffect(() => { if (user?.userId) loadReviews(); }, [user?.userId]);
+  useEffect(() => { loadReviews(); }, []);
 
   if (loading) return <Loader />;
 

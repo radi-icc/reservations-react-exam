@@ -20,8 +20,12 @@ public class RepresentationService {
     private final ShowRepository showRepository;
     private final LocationRepository locationRepository;
 
-    public List<RepresentationResponseDto> getAllRepresentations() {
-        return representationRepository.findAll()
+    public List<RepresentationResponseDto> getAllRepresentations(Long showId) {
+        List<Representation> representations = showId == null
+                ? representationRepository.findAll()
+                : representationRepository.findByShowId(showId);
+
+        return representations
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

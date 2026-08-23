@@ -6,6 +6,13 @@ export const importExternalShows = (defaultLocationId) =>
   });
 
 export const exportShowsCsv = () => axiosClient.get("/admin/csv/shows/export");
-export const importShowsCsv = (file) => axiosClient.post("/admin/csv/shows/import", { file });
+export const importShowsCsv = (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  return axiosClient.post("/admin/csv/shows/import", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
 
 export const RSS_FEED_URL = `${API_BASE_URL}/rss/upcoming-representations`;

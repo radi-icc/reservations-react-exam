@@ -22,6 +22,16 @@ public class ReviewController {
         return reviewService.getAllReviews();
     }
 
+    @GetMapping("/shows/{showId}")
+    public List<ReviewResponseDto> getPublishedReviewsByShow(@PathVariable Long showId) {
+        return reviewService.getPublishedReviewsByShow(showId);
+    }
+
+    @GetMapping("/me")
+    public List<ReviewResponseDto> getMyReviews() {
+        return reviewService.getMyReviews();
+    }
+
     @GetMapping("/{id}")
     public ReviewResponseDto getReviewById(@PathVariable Long id) {
         return reviewService.getReviewById(id);
