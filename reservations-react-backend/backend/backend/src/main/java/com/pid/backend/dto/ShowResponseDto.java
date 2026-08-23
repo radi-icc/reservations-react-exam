@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -18,6 +20,8 @@ public class ShowResponseDto {
 
     private Long producerId;
     private String producerName;
+    private LocalDate nextPerformanceDate;
+    private LocalTime nextPerformanceTime;
     private String slug;
     private String title;
     private String posterUrl;

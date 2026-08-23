@@ -4,16 +4,19 @@ import com.pid.backend.dto.ShowRequestDto;
 import com.pid.backend.dto.ShowResponseDto;
 import com.pid.backend.entity.Location;
 import com.pid.backend.entity.Show;
+import com.pid.backend.entity.Representation;
 import com.pid.backend.entity.User;
 import com.pid.backend.repository.LocationRepository;
 import com.pid.backend.repository.ShowRepository;
 import com.pid.backend.repository.UserRepository;
+import com.pid.backend.repository.RepresentationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.text.Normalizer;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
 
@@ -24,6 +27,7 @@ public class ShowService {
     private final ShowRepository showRepository;
     private final LocationRepository locationRepository;
     private final UserRepository userRepository;
+    private final RepresentationRepository representationRepository;
 
     public List<ShowResponseDto> getAllShows() {
         return showRepository.findAll()
@@ -88,6 +92,9 @@ public class ShowService {
     private ShowResponseDto mapToResponse(Show show) {
         Location location = show.getLocation();
         User producer = show.getProducer();
+        Representation nextRepresentation = representationRepository
+                .findFirstByShowIdAndPerformanceDateGreaterThanEqualOrderByPerformanceDateAscPerformanceTimeAsc(show.getId(), LocalDate.now())
+                .orElse(null);
 
         return ShowResponseDto.builder()
                 .id(show.getId())
@@ -95,6 +102,8 @@ public class ShowService {
                 .locationDesignation(location != null ? location.getDesignation() : null)
                 .producerId(producer != null ? producer.getId() : null)
                 .producerName(producer != null ? producer.getUsername() : null)
+                .nextPerformanceDate(nextRepresentation != null ? nextRepresentation.getPerformanceDate() : null)
+                .nextPerformanceTime(nextRepresentation != null ? nextRepresentation.getPerformanceTime() : null)
                 .slug(show.getSlug())
                 .title(show.getTitle())
                 .posterUrl(show.getPosterUrl())
