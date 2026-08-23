@@ -32,6 +32,8 @@ class PublicWorkflowIntegrationTest {
     @Autowired private ShowRepository showRepository;
     @Autowired private RepresentationRepository representationRepository;
     @Autowired private PriceRepository priceRepository;
+    @Autowired private AffiliatePlanRepository affiliatePlanRepository;
+    @Autowired private ApiKeyRepository apiKeyRepository;
 
     @Test
     void exposesUpcomingRepresentationsAsRss() throws Exception {
@@ -83,6 +85,18 @@ class PublicWorkflowIntegrationTest {
         mockMvc.perform(multipart("/api/admin/csv/shows/import").file(file))
                 .andExpect(status().isOk())
                 .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.importedCount").value(1));
+    }
+
+    @Test
+    void enforcesTheMonthlyAffiliateQuota() throws Exception {
+        User affiliate = member("quota-affiliate");
+        AffiliatePlan plan = affiliatePlanRepository.save(AffiliatePlan.builder().planName("LIMITED_TEST").apiLimit(1).monthlyPrice(BigDecimal.ZERO).build());
+        apiKeyRepository.save(ApiKey.builder().user(affiliate).affiliatePlan(plan).apiKey("limited-test-key").enabled(true).build());
+
+        mockMvc.perform(get("/api/affiliate/shows").header("X-API-KEY", "limited-test-key"))
+                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/affiliate/shows").header("X-API-KEY", "limited-test-key"))
+                .andExpect(status().isBadRequest());
     }
 
     private User member(String username) {
