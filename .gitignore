@@ -1,0 +1,9 @@
+# Local tooling and generated files
+reservations-react-frontend/node_modules/
+reservations-react-frontend/dist/
+reservations-react-frontend/.npm-cache/
+reservations-react-backend/backend/backend/.maven-cache/
+reservations-react-backend/backend/backend/target/
+
+# Local environment overrides
+reservations-react-backend/backend/backend/.env

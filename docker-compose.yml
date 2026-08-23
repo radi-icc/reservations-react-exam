@@ -1,0 +1,23 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: reservations-mysql
+    environment:
+      MYSQL_DATABASE: reservations_db
+      MYSQL_USER: reservations
+      MYSQL_PASSWORD: reservations
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - reservations_mysql_data:/var/lib/mysql
+      - ./reservations-react-backend/backend/backend/src/main/resources/static/db.sql:/docker-entrypoint-initdb.d/01-schema-and-demo-data.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 15s
+
+volumes:
+  reservations_mysql_data:
