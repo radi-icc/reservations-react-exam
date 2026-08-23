@@ -2,6 +2,10 @@
 html { scroll-behavior: smooth; }
 body { margin: 0; min-height: 100vh; background: var(--bg); color: var(--text); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 a { color: inherit; text-decoration: none; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex="0"]:focus-visible { outline: 3px solid #2563eb; outline-offset: 3px; }
+.skip-link { position: fixed; z-index: 100; top: 8px; left: 8px; transform: translateY(-160%); background: #111827; color: white; padding: 10px 14px; border-radius: 8px; font-weight: 800; }
+.skip-link:focus { transform: translateY(0); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 button, input, select, textarea { font: inherit; }
 button { cursor: pointer; }
 button:disabled { cursor: not-allowed; opacity: 0.62; }
@@ -74,6 +78,32 @@ button:disabled { cursor: not-allowed; opacity: 0.62; }
 .form-wide { grid-column: 1 / -1; }
 
 .filters-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-soft); padding: 18px; display: grid; grid-template-columns: 1.7fr 1fr 1fr 1fr auto; gap: 14px; align-items: end; }
+.catalogue-page { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 34px; }
+.catalogue-sidebar { border-right: 1px solid #cbd5e1; padding: 8px 18px 8px 0; display: grid; align-content: start; gap: 4px; }
+.catalogue-sidebar h2 { margin: 0 0 8px; font-size: 16px; font-weight: 800; }
+.catalogue-sidebar a { padding: 8px 0; color: var(--muted); font-size: 14px; }
+.catalogue-sidebar a:hover { color: var(--primary); text-decoration: underline; }
+.catalogue-content { min-width: 0; display: grid; gap: 24px; }
+.catalogue-heading h1 { font-size: clamp(32px, 4vw, 48px); }
+.catalogue-stage { min-height: 250px; position: relative; display: grid; place-items: center; overflow: hidden; border: 1px solid #d1d5db; background: #f8fafc; }
+.stage-copy { position: relative; z-index: 1; width: min(430px, 70%); text-align: center; background: white; border: 1px solid #9ca3af; padding: 42px 24px; }
+.stage-copy span { color: var(--primary); text-transform: uppercase; font-weight: 900; font-size: 12px; letter-spacing: .08em; }
+.stage-copy h2 { margin: 10px 0; font-size: 25px; }
+.stage-copy p { margin: 0; color: var(--muted); }
+.stage-curtain { position: absolute; inset: 28px auto 28px 0; width: 32%; background: repeating-linear-gradient(105deg, #e5e7eb 0 2px, transparent 2px 72px); transform: skewY(10deg); }
+.stage-curtain-right { left: auto; right: 0; transform: skewY(-10deg); }
+.catalogue-list { border-top: 2px solid #111827; padding-top: 18px; }
+.catalogue-list h2 { margin: 0; font-size: 23px; }
+.catalogue-table-wrap { overflow-x: auto; border: 1px solid #64748b; background: white; }
+.catalogue-table { width: 100%; min-width: 670px; border-collapse: collapse; }
+.catalogue-table th, .catalogue-table td { padding: 12px 14px; border: 1px solid #cbd5e1; text-align: left; }
+.catalogue-table thead th { background: #f8fafc; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+.catalogue-table tbody th { font-weight: 800; }
+.catalogue-table tbody th a:hover, .catalogue-details:hover { text-decoration: underline; color: var(--primary); }
+.catalogue-status { font-size: 13px; font-weight: 800; }
+.catalogue-status.is-bookable { color: #15803d; }.catalogue-status.is-closed { color: #b91c1c; }
+.catalogue-details { font-weight: 800; color: var(--primary); }
+.catalogue-empty { text-align: center; padding: 32px; color: var(--muted); }
 .show-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; }
 .show-card { background: white; border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow-soft); overflow: hidden; transition: .2s ease; }
 .show-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
@@ -173,6 +203,9 @@ button:disabled { cursor: not-allowed; opacity: 0.62; }
   .admin-body { grid-template-columns: 1fr; }
   .admin-sidebar { position: static; height: auto; flex-direction: row; overflow: auto; white-space: nowrap; }
   .admin-content { padding: 22px; }
+  .catalogue-page { grid-template-columns: 1fr; gap: 18px; }
+  .catalogue-sidebar { border-right: 0; border-bottom: 1px solid var(--border); padding: 0 0 12px; grid-template-columns: repeat(4, auto); overflow-x: auto; white-space: nowrap; }
+  .catalogue-sidebar h2 { display: none; }
 }
 @media (max-width: 720px) {
   .main-content { width: min(100% - 24px, var(--container)); padding-top: 20px; }
@@ -181,4 +214,5 @@ button:disabled { cursor: not-allowed; opacity: 0.62; }
   .page-header, .section-title-row, .representation-card, .reservation-card { flex-direction: column; align-items: stretch; }
   .filters-card, .two-column-form, .tools-grid, .api-key-form, .reservation-summary { grid-template-columns: 1fr; }
   .show-poster-box, .image-placeholder.large { min-height: 280px; }
+  .catalogue-stage { min-height: 210px; }.stage-copy { width: calc(100% - 32px); padding: 30px 16px; }.catalogue-sidebar { grid-template-columns: repeat(4, max-content); gap: 16px; }.catalogue-table th, .catalogue-table td { padding: 11px 12px; }
 }

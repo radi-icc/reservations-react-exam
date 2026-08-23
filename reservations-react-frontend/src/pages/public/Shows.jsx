@@ -5,7 +5,7 @@ import { getShows } from "../../api/showsApi";
 import Loader from "../../components/common/Loader";
 import Pagination from "../../components/common/Pagination";
 import ShowFilters from "../../components/shows/ShowFilters";
-import ShowGrid from "../../components/shows/ShowGrid";
+import CatalogueTable from "../../components/shows/CatalogueTable";
 import useDebounce from "../../hooks/useDebounce";
 import { DEFAULT_PAGE_SIZE } from "../../utils/constants";
 import { getErrorMessage } from "../../utils/errorUtils";
@@ -71,23 +71,40 @@ const Shows = () => {
   };
 
   return (
-    <section className="page">
-      <div className="page-header">
+    <section className="catalogue-page">
+      <aside className="catalogue-sidebar" aria-label="Catalogue navigation">
+        <h2>Menu</h2>
+        <a href="#catalogue">Shows</a>
+        <a href="#filters">Search & filters</a>
+        <a href="#upcoming">Upcoming performances</a>
+        <a href="#catalogue">My reservations</a>
+      </aside>
+      <div className="catalogue-content">
+      <div className="page-header catalogue-heading">
         <div>
           <span className="eyebrow">Catalogue</span>
-          <h1>Shows</h1>
-          <p>Search, filter, sort and paginate the theatre catalogue.</p>
+          <h1>Shows catalogue</h1>
+          <p>Browse productions, compare venues and reserve an upcoming performance.</p>
         </div>
       </div>
 
-      <ShowFilters
+      <section id="upcoming" className="catalogue-stage" aria-labelledby="upcoming-title">
+        <div className="stage-curtain" aria-hidden="true" />
+        <div className="stage-copy"><span>Next dates</span><h2 id="upcoming-title">Upcoming performances</h2><p>{shows.slice(0, 3).map((show) => show.title).join(" · ") || "The new programme is being prepared."}</p></div>
+        <div className="stage-curtain stage-curtain-right" aria-hidden="true" />
+      </section>
+
+      <div id="filters"><ShowFilters
         filters={filters}
         locations={locations}
         onChange={handleChange}
         onReset={() => { setPage(0); setFilters(defaultFilters); }}
-      />
+      /></div>
 
-      {loading ? <Loader /> : <ShowGrid shows={shows} />}
+      <section id="catalogue" className="catalogue-list" aria-labelledby="catalogue-title">
+        <div className="section-title-row"><h2 id="catalogue-title">Show list</h2><span className="muted-text">{totalElements} productions</span></div>
+        {loading ? <Loader /> : <CatalogueTable shows={shows} />}
+      </section>
 
       <Pagination
         currentPage={page + 1}
@@ -95,6 +112,7 @@ const Shows = () => {
         totalElements={totalElements}
         onPageChange={(newPage) => setPage(newPage - 1)}
       />
+      </div>
     </section>
   );
 };

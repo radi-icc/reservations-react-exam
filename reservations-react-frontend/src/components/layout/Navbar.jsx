@@ -12,7 +12,7 @@ const Navbar = () => {
         <span>{APP_NAME}</span>
       </Link>
 
-      <nav className="navbar-links" aria-label="Main navigation">
+      <nav className="navbar-links" aria-label="Primary navigation">
         <NavLink to="/" end>Home</NavLink>
         <NavLink to="/shows">Shows</NavLink>
         <NavLink to="/affiliate-catalogue">Affiliate API</NavLink>

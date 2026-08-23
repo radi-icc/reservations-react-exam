@@ -4,8 +4,9 @@ import Footer from "./Footer";
 
 const PublicLayout = () => (
   <div className="app-layout">
+    <a className="skip-link" href="#main-content">Skip to content</a>
     <Navbar />
-    <main className="main-content">
+    <main id="main-content" className="main-content">
       <Outlet />
     </main>
     <Footer />
