@@ -8,11 +8,13 @@ import com.pid.backend.entity.User;
 import com.pid.backend.exception.ResourceNotFoundException;
 import com.pid.backend.repository.ReviewRepository;
 import com.pid.backend.repository.ShowRepository;
+import com.pid.backend.repository.RepresentationReservationRepository;
 import lombok.RequiredArgsConstructor;
 import com.pid.backend.exception.BadRequestException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,7 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
     private final ShowRepository showRepository;
+    private final RepresentationReservationRepository representationReservationRepository;
     private final CurrentUserService currentUserService;
 
     public List<ReviewResponseDto> getAllReviews() {
@@ -63,6 +66,14 @@ public class ReviewService {
 
         Show show = showRepository.findById(requestDto.getShowId())
                 .orElseThrow(() -> new ResourceNotFoundException("Show not found with id: " + requestDto.getShowId()));
+
+        boolean attended = representationReservationRepository
+                .existsByReservationUserIdAndReservationStatusIgnoreCaseAndRepresentationShowIdAndRepresentationPerformanceDateBefore(
+                        user.getId(), "CONFIRMED", show.getId(), LocalDate.now()
+                );
+        if (!attended) {
+            throw new BadRequestException("You can review a show only after attending a confirmed performance");
+        }
 
         Review review = Review.builder()
                 .user(user)
